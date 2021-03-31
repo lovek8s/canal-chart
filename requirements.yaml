@@ -1,0 +1,13 @@
+dependencies:
+- condition: canal-admin.enabled
+  name: canal-admin
+  repository: https://registry-chart.mypaas.com.cn
+  version: 1.3.8
+- condition: canal-server.enabled
+  name: canal-server
+  repository: https://registry-chart.mypaas.com.cn
+  version: 1.3.8
+- condition: zookeeper.enabled
+  name: zookeeper
+  repository: https://registry-chart.mypaas.com.cn
+  version: 1.3.8

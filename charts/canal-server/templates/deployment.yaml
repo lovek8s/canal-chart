@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "canal-server.fullname" . }}
+  labels:
+    app: {{ template "canal-server.name" . }}
+    chart: {{ template "canal-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "canal-server.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "canal-server.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: {{ .Values.cmd.command }}
+          args: {{ .Values.cmd.args }}
+{{- if .Values.env.enabled -}}
+    {{- with .Values.env.value }}
+          env:
+{{ toYaml . | indent 12 }}
+      {{- end -}}
+    {{- end }}
+{{- if .Values.ports.enabled -}}
+    {{- with .Values.ports.port }}
+          ports:
+{{ toYaml . | indent 12 }}
+      {{- end -}}
+    {{- end }}
+{{- if .Values.livenessProbe.enabled -}}
+    {{- with .Values.livenessProbe.probe }}
+          livenessProbe:
+{{ toYaml . | indent 12 }}
+      {{- end }}
+    {{- end }}
+{{- if .Values.readinessProbe.enabled -}}
+    {{- with .Values.readinessProbe.probe }}
+          readinessProbe:
+{{ toYaml . | indent 12 }}
+      {{- end }}
+    {{- end }}
+    {{- with .Values.resources }}
+          resources:
+{{ toYaml . | indent 12 }}
+    {{- end }}
+{{- if .Values.volume_mount.enabled }}
+          volumeMounts:
+            - mountPath: {{ .Values.volume_mount.volumes }}
+              subPath: canal.properties
+              readOnly: false
+              name: server-conf
+  {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- if .Values.volume_mount.enabled }}
+      volumes:
+        - name: server-conf
+          configMap:
+            name: canal-canal-server-configuration
+            defaultMode: 0777
+  {{- end }}

@@ -1,0 +1,90 @@
+affinity: {}
+cmd:
+  args: '[]'
+  command: '[]'
+env:
+  enabled: false
+hpa:
+  enabled: false
+image:
+  pullPolicy: Always
+  repository: registry.cn-hangzhou.aliyuncs.com/mypaas/canal-server
+  tag: latest
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+  enabled: false
+  path:
+  - /dataflow
+livenessProbe:
+  enabled: false
+  probe:
+    httpGet:
+      path: /
+      port: ''
+nodeSelector: {}
+ports:
+  enabled: true
+  port:
+  - containerPort: 11110
+    protocol: TCP
+    name: admin
+  - containerPort: 11111
+    protocol: TCP
+    name: canal
+  - containerPort: 11112
+    protocol: TCP
+    name: metric
+readinessProbe:
+  enabled: false
+  probe:
+    httpGet:
+      path: /
+      port: ''
+replicaCount: 1
+resources:
+  limits:
+    cpu: 0.2
+    memory: 512Mi
+  requests:
+    cpu: 0
+    memory: 0Mi
+service:
+  enabled: true
+  type: ClusterIP
+serviceports:
+- name: admin
+  port: 11110
+  protocol: TCP
+  targetPort: admin
+- name: canal
+  port: 11111
+  protocol: TCP
+  targetPort: canal
+- name: metric
+  port: 11112
+  protocol: TCP
+  targetPort: metric
+ons: []
+volume_mount:
+  enabled: false
+  volumes: []
+
+configurationFilesPath: /home/admin/canal-server/conf/
+# Custom mysql configuration files used to override default mysql settings
+configurationFiles:
+  canal.properties: |
+    # register ip
+    # ${HOSTNAME} 为podname，canal-server-discovery-svc-stable为svc名称
+    # StatefulSet类型pod名称是固定的，k8s集群内pod域名规则为pod_name.svc_name.namespace.svc.cluster.local
+    canal.register.ip = canal-server-svc-stable.default.svc.cluster.local
+
+    # canal admin config
+    canal.admin.manager = canal-admin-stable:8089
+    canal.admin.port = 11110
+    canal.admin.user = admin
+    canal.admin.passwd = 6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9
+    # admin auto register
+    canal.admin.register.auto = true
+    canal.admin.register.cluster = canal-test

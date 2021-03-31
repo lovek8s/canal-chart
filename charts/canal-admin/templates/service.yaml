@@ -1,0 +1,20 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "canal-admin.name" . }}
+  labels:
+    app: {{ template "canal-admin.name" . }}
+    chart: {{ template "canal-admin.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+{{- with .Values.serviceports }}
+{{ toYaml . | indent 4 }}
+      {{- end }}
+  selector:
+    app: {{ template "canal-admin.name" . }}
+    release: {{ .Release.Name }}
+{{- end }}

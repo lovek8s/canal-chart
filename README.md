@@ -4,7 +4,7 @@
 
 Base alibaba's [canal](https://github.com/alibaba/canal), it's fast to deploy canal. This release fix some bugs 
 
-**Homepage: **https://github.com/alibaba/canal
+**Homepage: **  https://github.com/alibaba/canal
 
 ## Install  with helm
 You can clone repo to localhost:
@@ -75,7 +75,7 @@ services:
 
 canal.properties文件如下
 
-```
+```properties
 # canal admin config
 
 canal.admin.manager = canaladmin:8089
@@ -92,4 +92,3 @@ canal.admin.register.auto = true
 
 canal.admin.register.cluster = canal #(admin控制台新建的集群名)
 ```
-

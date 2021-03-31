@@ -4,13 +4,13 @@ canal-admin:
     enabled: true
     value:
     - name: spring.datasource.address
-      value: '172.16.1.17:3306'
+      value: 'xxx:3306'
     - name: spring.datasource.database
       value: 'canal_manager'
     - name: spring.datasource.username
       value: 'root'
     - name: spring.datasource.password
-      value: 'mic_mq@2019'
+      value: 'xxx'
     - name: spring.datasource.driver-class-name
       value: 'com.mysql.jdbc.Driver'
     - name: spring.datasource.url
@@ -20,7 +20,7 @@ canal-admin:
     - name: canal.adminUser
       value: 'admin'
     - name: canal.adminPasswd
-      value: '0S1BUQXMMSIN26FFE5YPNHI44PU3QL02'
+      value: '0S1BxxN26FFE5YPNHI44PU3QL02'
   image:
     pullPolicy: Always
     repository: registry.cn-hangzhou.aliyuncs.com/mypaas/canal-admin
@@ -31,12 +31,12 @@ canal-admin:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
     enabled: true
     hosts:
-    - canal-admin.mypaas.com.cn
+    - canal-admin.com
     path:
     - /
     tls:
     - hosts:
-      - canal-admin.mypaas.com.cn
+      - canal-admin.com
       secretName: ""
   replicaCount: 1
   resources:
@@ -81,7 +81,7 @@ canal-server:
       canal.admin.manager = canal-admin:8089
       canal.admin.port = 11110
       canal.admin.user = admin
-      canal.admin.passwd = 471991D55FE532EA0A3EC0528149DAD2A0A35085
+      canal.admin.passwd = 2EA0A3EC0528149DAD2A0A35085
       # admin auto register
       canal.admin.register.auto = true
       canal.admin.register.cluster = canal

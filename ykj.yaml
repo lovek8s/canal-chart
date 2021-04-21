@@ -1,0 +1,93 @@
+USER-SUPPLIED VALUES:
+canal-admin:
+  enabled: true
+  env:
+    enabled: true
+    value:
+    - name: spring.datasource.address
+      value: rm-bp138373x0t2f1009.mysql.rds.aliyuncs.com:3306
+    - name: spring.datasource.database
+      value: canal_manager
+    - name: spring.datasource.username
+      value: adm
+    - name: spring.datasource.password
+      value: ykj@1234@180
+    - name: spring.datasource.driver-class-name
+      value: com.mysql.jdbc.Driver
+    - name: spring.datasource.url
+      value: jdbc:mysql://${spring.datasource.address}/${spring.datasource.database}?useUnicode=true&characterEncoding=UTF-8&  useSSL=false
+    - name: server.port
+      value: "8089"
+    - name: canal.adminUser
+      value: admin
+    - name: canal.adminPasswd
+      value: canal@2021!
+  image:
+    pullPolicy: Always
+    repository: registry.cn-hangzhou.aliyuncs.com/mypaas/canal-admin
+    tag: latest
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    enabled: true
+    hosts:
+    - bigdata-canal-admin.myfuwu.com.cn
+    path:
+    - /
+    tls:
+    - hosts:
+      - canal-admin.com
+      secretName: ""
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 1
+      memory: 2024Mi
+    requests:
+      cpu: 0.2
+      memory: 512Mi
+  volume_mount:
+    enabled: false
+    volumes: []
+canal-server:
+  configurationFiles:
+    canal.properties: |
+      # register ip
+      # ${HOSTNAME} 为podname，canal-server-discovery-svc-stable为svc名称
+      # StatefulSet类型pod名称是固定的，k8s集群内pod域名规则为pod_name.svc_name.namespace.svc.cluster.local
+      canal.register.ip = canal-server.default.svc.cluster.local
+
+      # canal admin config
+      canal.admin.manager = canal-admin:8089
+      canal.admin.port = 11110
+      canal.admin.user = admin
+      canal.admin.passwd = D01AFC82F30CEDFC5668E70CD832B786F492118F
+      # admin auto register
+      canal.admin.register.auto = true
+      canal.admin.register.cluster = canal
+  enabled: true
+  env:
+    enabled: true
+    value:
+    - name: JAVA_OPTS
+      value: -server -Xms2048m -Xmx8092m -Xmn1024m -XX:SurvivorRatio=2 -XX:PermSize=96m -XX:MaxPermSize=256m -Xss256k -XX:-UseAdaptiveSizePolicy -XX:MaxTenuringThreshold=15 -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError
+  image:
+    pullPolicy: Always
+    repository: registry.cn-hangzhou.aliyuncs.com/mypaas/canal-server
+    tag: latest
+  ingress:
+    enabled: false
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 2
+      memory: 10240Mi
+    requests:
+      cpu: 0.5
+      memory: 8192Mi
+  volume_mount:
+    enabled: true
+    volumes: /home/admin/canal-server/conf/canal.properties
+zookeeper:
+  enable: true
